@@ -1,0 +1,255 @@
+*{
+    font-family: 'Roboto', sans-serif;
+    
+}
+
+a{
+    color:#fff;
+    text-decoration:none;
+}
+
+.wrapper{
+    position:fixed;
+    padding:0;
+    margin:0;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: url("back.png");
+    color:#fff;
+}
+
+.header{
+    width:100%;
+    height:100px;
+    display:flex;
+    justify-content: center;
+    background: #171a21;
+    color:#fff;
+}
+
+header{
+    height:100px;
+    width:1000px;
+    display:flex;
+    align-items: center;
+    text-transform: uppercase;
+    justify-content: space-between;
+}
+
+header div{
+    display:flex;
+}
+
+header div menuitem{
+    font-weight: 300;
+    width:auto;
+    padding-left:15px;
+    padding-right:15px;
+    height:100px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    transition:.35s;
+    cursor:pointer;
+}
+
+header div menuitem:hover{
+    background:#262633;
+}
+
+.page{
+    width:1000px;
+    max-width:100%;
+    position: relative;
+    left:50%;
+    transform:translate(-50%);
+    background:rgba(0,0,0,0.75);
+    background-size: cover;
+    display: table;
+    height: calc(100vh - 160px);
+    justify-content:center;
+}
+
+footer{
+    width:960px;
+    height:60px;
+    background: #171a21;
+    position: relative;
+    left:50%;
+    transform:translate(-50%);
+    color:#fff;
+    font-weight: 300;
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+    font-size:12px;
+    padding-left:20px;
+    padding-right:20px;
+}
+
+.steamid{
+    text-align: left;
+    height: 33px;
+    margin-top: 5px;
+    top: 15px;
+    bottom: 15px;
+    font-size: 17px;
+    width: 50%;
+    outline: none;
+    font-style: italic;
+    background-color: #1b2838;
+    background: -webkit-linear-gradient( top, #1b2838 5%, #203342 95%);
+    background: linear-gradient( to bottom, #1b2838 5%, #203342 95%);
+    border: 1px solid #56707f;
+    border-radius: 3px;
+    box-shadow: 0 0 50px rgba(103,193,245,0.3);
+    color: #abdaf4;
+    padding: 5px 5px 5px 10px;
+    text-indent: 3px;
+}
+
+form{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.form{
+    margin-top:35px;
+    font-size: 28px;
+    color: #66C0F4;
+    text-align:center;
+}
+
+.results{
+    width: 750px;
+    height: 315px;
+    background: rgba(0,0,0,0.75);
+    margin: 50px auto 0 auto;
+    padding:25px;
+    display:none;
+}
+
+.error{
+    margin:0 auto;
+    margin-top:25px;
+    color:#ff3e36;
+    text-align:center;
+    font-size:22px;
+}
+
+/*profile mounting*/
+.avatar{
+    float:left;
+    margin-right:15px;
+}
+
+.nick{
+    float:left;
+    font-size:25px;
+}
+
+.name{
+    float:left;
+    font-weight:300;
+    margin-top: -5px;
+    font-size: 14px;
+    color: #dedddc;
+}
+
+.flag{
+    width:20px;
+    float:left;
+    margin-top: -5px;
+    margin-right:5px;
+}
+
+.desc, .since, .last{
+    font-size:13px;
+    font-weight:300;
+    color: #dedddc;
+}
+
+.since{
+    font-size:11px;
+    margin-top: -2.5px;
+}
+
+.games_count, .hours_count, .years{
+    font-size:25px;
+    font-weight:300;
+    color: #66C0F4;
+}
+
+.level{
+    background:#1c1c1c;
+    height: 60px;
+    font-size:25px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+
+.most{
+    width:100%;
+    float:left;
+    margin-top:25px;
+}
+
+.mp{
+    font-weight:300;
+    font-size:20px;
+    color: #66C0F4;
+}
+
+.most_header{
+    margin-right:10px;
+}
+
+.most_header{
+    float:left;
+}
+
+.most_name{
+    font-weight:300;
+    font-size:20px;
+}
+
+.most_dev, .most_genre{
+    font-weight:300;
+    color: #dedddc;
+    font-size:14px;
+    margin-top:-2px;
+    margin-bottom: 5px;
+}
+
+.most_hours{
+    font-weight:300;
+    color: #dedddc;
+    font-size:14px;
+    margin-top:-2px;
+}
+
+.most_hours span{
+    font-weight:300;
+    font-size:20px;
+    color: #66C0F4;
+}
+
+.ban{
+    height:70px;
+    margin-top:15px;
+    display: flex;
+    align-items: center;
+    font-weight:300;
+    font-size:12px;
+}
+
+.ban img{
+    height:50px;
+    margin-left:12px;
+    margin-right:10px;
+}
