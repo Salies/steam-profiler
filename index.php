@@ -263,7 +263,7 @@ for($i = 0; $i < $j ; $i++) { //looping to find its id
 $play = $games->response->games[$i];
 if($play->playtime_forever==$max){
 $mostid = $play->appid;
-$most_header = 'http://media.steampowered.com/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
+$most_header = 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
 }
 };
 //most played game info
@@ -274,6 +274,7 @@ $most_name = $most->$mostid->data->name;
 $most_author = $most->$mostid->data->developers[0];
 $most_genre = $most->$mostid->data->genres[0]->description;
 $most_background = $most->$mostid->data->background;
+$most_background = str_replace("http://cdn.akamai.steamstatic.com","https://steamcdn-a.akamaihd.net",$most);
 //bans
 $bans = json_decode(file_get_contents($bans_url));
 $bans_vac = $bans->players[0]->VACBanned;
