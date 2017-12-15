@@ -149,8 +149,7 @@
        </footer>
   </div>
   <?php
-header("Access-Control-Allow-Origin: *");
-$key = "awesome_key_here";
+$key = "58B610E1A859AE171BCC8E3D3326C316";
 $input = $_POST['steamid'];
 function morte(){
 echo "<script>error();</script>";
