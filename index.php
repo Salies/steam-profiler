@@ -2,10 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Profiler
-    </title>
-    <script async defer src="https://buttons.github.io/buttons.js">
-    </script>
+    <title>Steam Profiler</title>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
     <link rel="stylesheet" href="assets/index.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="https://saliesbox.com/exp.png"/>
@@ -13,7 +11,7 @@
     <meta property="og:title" content="Salies Steam Profiler">
     <meta property="og:site_name" content="Salies Experiments">
     <meta property="og:description" content="A lightweight Steam data retriever, made with the Steam API.">
-    <meta property="og:image" content="http://imgur.com/YprLcTh.png">
+    <meta property="og:image" content="https://imgur.com/YprLcTh.png">
   </head>
   <body>
     <script>
@@ -36,7 +34,7 @@
         <header>
           <a href=".">
             <div style="margin-left:20px;">
-              <img src="steam.png" style="margin-right:15px;float:left;">
+              <img src="https://imgur.com/YprLcTh.png" style="margin-right:15px;float:left;">
               <div style="float:left;display: flex;align-self: center;font-size: 1.25rem;color: #dedddc;">Steam Profiler
               </div>
             </div>
@@ -141,15 +139,13 @@
 </section>
 <footer>
   <div>Made with 
-    <a style="color: #dedddc;font-weight:bold;text-decoration:none;" href="https://www.youtube.com/watch?v=g8GdH59yuD8" target="_blank">❤
+    <a style="color: #dedddc;font-weight:bold;text-decoration:none;" href="https://www.youtube.com/watch?v=KF-pdp12lk8" target="_blank">❤
     </a> by 
-    <a style="color: #dedddc;" href="https://saliesbox.com">Salies
-    </a>, using the 
-    <a $
-       </footer>
+    <a style="color: #dedddc;" href="https://saliesbox.com">Salies</a> using the <a style="color: #dedddc;" href="https://developer.valvesoftware.com/wiki/Steam_Web_API">Steam API</a>.
+</footer>
   </div>
   <?php
-$key = "58B610E1A859AE171BCC8E3D3326C316";
+$key = "super_cool_key";
 $input = $_POST['steamid'];
 function morte(){
 echo "<script>error();</script>";
@@ -175,7 +171,7 @@ $user = $input;
 }
 //true info
 if (is_numeric($user)!==true) {
-$url = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=".$key."&vanityurl=".$user;
+$url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=".$key."&vanityurl=".$user;
 $idpage = file_get_contents($url);
 $obj = json_decode($idpage);
 if($obj->response->success!==1){
@@ -190,10 +186,10 @@ morte(); //if number input has less than 17 characters, die
 $trueid = $user;
 }
 //urls
-$level_url = "http://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=".$key."&steamid=".$trueid;
-$prof_url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=".$key."&steamids=".$trueid;
-$games_url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=".$key."&steamid=".$trueid."&format=json&include_appinfo=1&include_played_free_games=1";
-$bans_url = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=".$key."&steamids=".$trueid;
+$level_url = "https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=".$key."&steamid=".$trueid;
+$prof_url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=".$key."&steamids=".$trueid;
+$games_url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=".$key."&steamid=".$trueid."&format=json&include_appinfo=1&include_played_free_games=1";
+$bans_url = "https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=".$key."&steamids=".$trueid;
 $level = json_decode(file_get_contents($level_url))->response->player_level;
 if(is_numeric($level)!==true){
 morte();
@@ -262,7 +258,7 @@ for($i = 0; $i < $j ; $i++) { //looping to find its id
 $play = $games->response->games[$i];
 if($play->playtime_forever==$max){
 $mostid = $play->appid;
-$most_header = 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
+$most_header = 'https://media.steampowered.com/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
 }
 };
 //most played game info
@@ -272,8 +268,7 @@ $most_link = "http://store.steampowered.com/app/".$mostid;
 $most_name = $most->$mostid->data->name;
 $most_author = $most->$mostid->data->developers[0];
 $most_genre = $most->$mostid->data->genres[0]->description;
-$most_background = $most->$mostid->data->background;
-$most_background = str_replace("http://cdn.akamai.steamstatic.com","https://steamcdn-a.akamaihd.net",$most);
+$most_background = str_replace("http://cdn.akamai.steamstatic.com","https://steamcdn-a.akamaihd.net",($most->$mostid->data->background));
 //bans
 $bans = json_decode(file_get_contents($bans_url));
 $bans_vac = $bans->players[0]->VACBanned;
@@ -289,7 +284,27 @@ $safe = 'bad';
 echo //fuck arrays - nah, just kidding, it's just that JS arrays are kinda buggy to write in PHP
 "
 <script>
-var nick = '$prof_name', real_name = '$real_name', flag = '$band', country = '$country', avatar = '$prof_img', games_count = $games_count, hours = $total_hours, years = $years, since = '$first_on', level = '$levar', online = '$on', last = '$last$
+var nick = '$prof_name',
+real_name = '$real_name', 
+flag = '$band', 
+country = '$country', 
+avatar = '$prof_img', 
+games_count = $games_count, 
+hours = $total_hours, 
+years = $years, 
+since = '$first_on', 
+level = '$levar', 
+online = '$on', 
+last = '$last',
+most_name = '$most_name',
+most_header = '$most_header',
+most_genre = '$most_genre',
+most_dev = '$most_author',
+most_url = '$most_link'
+most_hours = '$games_hours'
+player_url = '$prof_url',
+most_back = '$most_background',
+ban = '$safe';
 </script>
 ";
 ?>
