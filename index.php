@@ -258,7 +258,7 @@ for($i = 0; $i < $j ; $i++) { //looping to find its id
 $play = $games->response->games[$i];
 if($play->playtime_forever==$max){
 $mostid = $play->appid;
-$most_header = 'https://media.steampowered.com/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
+$most_header = 'http://media.steampowered.com/steamcommunity/public/images/apps/'.$mostid.'/'.$play->img_logo_url.'.jpg';
 }
 };
 //most played game info
