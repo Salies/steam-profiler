@@ -1,396 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Steam Profiler</title>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link rel="stylesheet" href="assets/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300" rel="stylesheet">
-    <link rel="shortcut icon" type="image/png" href="https://saliesbox.com/exp.png"/>
-    <meta property="og:url" content="https://exp.saliesbox.com/profiler">
-    <meta property="og:title" content="Salies Steam Profiler">
-    <meta property="og:site_name" content="Salies Experiments">
-    <meta property="og:description" content="A lightweight Steam data retriever, made with the Steam API.">
-    <meta property="og:image" content="https://imgur.com/YprLcTh.png">
-  </head>
-  <body>
-    <script>
-      function error(){
-        let de = document.querySelector('.error');
-        let error = 'Error. Please enter a valid Steam64ID, Vanity ID or just the Profile URL<br>(e.g.: <u>http://steamcommunity.com/id/sonicsalies/</u> or <u>http://steamcommunity.com/profiles/76561198125501194</u>).';
-        de.innerHTML = error;
-      }
-      function priva(){
-        let de = document.querySelector('.error');
-        let error = 'Error. The inputted profile is either private or friends-only.';
-        de.innerHTML = error;
-      }
-      function display(){
-        document.querySelector('.results').style.display = "block";
-      }
-    </script>
-    <div class="wrapper">
-      <section class="header">
-        <header>
+    <link rel="stylesheet" type="text/css" media="screen" href="index.css" />
+</head>
+<body>
+<?php
+$key = "your-cool-key";
+//to avoid error messages
+$input = '';
+if(isset($_GET['id'])){
+    $input = $_GET['id'];
+}
+
+function parseSteamVanity($key, $vanity){
+    $data = json_decode(file_get_contents('https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key='.$key.'&vanityurl='.$vanity));
+    if($data->response->success!==1){
+        return false;
+    }
+    else{
+        return $data->response->steamid;
+    }
+}
+
+function parseSteamURL($key, $url){
+    if(strrpos($url, '/id/') !== false){
+        return parseSteamVanity($key, str_replace("/", "", substr($url, strpos($url, "/id/") + 4)));
+    }
+    else if(strrpos($url, '/profile/') !== false){
+        return parseSteamVanity($key, str_replace("/", "", substr($url, strpos($url, "/profile/") + 9)));
+    }
+    else{
+        return false;
+    }
+}
+
+function parseSteamInput($key, $input){
+    if(substr($input, 0, 4) == 'http'){
+        return parseSteamURL($key, $input);
+    }
+    else if(is_numeric($input) === true && strlen($input) === 17){
+        return $input;
+    }
+    else{
+        return parseSteamVanity($key, $input);
+    }
+}
+
+function printProfile($dataArray){
+    $tag = '<div class="results"> <div class="player"> <div class="avatar" style="background-image:url('.$dataArray[0]->avatarfull.')"></div><a href="'.$dataArray[0]->profileurl.'" target="_blank" class="personaname">'.$dataArray[0]->personaname.'</a> <br><div class="country">'.(isset($dataArray[0]->loccountrycode) ?'<img src="node_modules/flag-icon-css/flags/4x3/'.strtolower($dataArray[0]->loccountrycode).'.svg" title="'.Locale::getDisplayRegion('-'.$dataArray[0]->loccountrycode, 'en').'">' : '').' <span>'.(isset($dataArray[0]->realname)?$dataArray[0]->realname:'').'</span> </div><span class="number">'.$dataArray[2][0].'</span> <span class="label">games owned</span> <br><span class="number">'.$dataArray[2][2].'</span> <span class="label">hours on record</span> <br><span class="number">'.(date('Y') - date('Y', $dataArray[0]->timecreated)).'</span> <span class="label">years of service</span><br><div class="since">(Member since '.date('F d, Y', $dataArray[0]->timecreated).')</div><span class="on">Online</span> - <span class="label">Last online on '.date('F d, Y', $dataArray[0]->lastlogoff).'</span> </div><div class="level-ban"> <div class="level">Level '.$dataArray[1].'</div><div class="ban'.($dataArray[3] !== 0 ? ' true' : '').'">'.($dataArray[3] === 0 ? '<b>Clean</b><br>No VAC bans on record.' : '<b>Hammered!</b><br>Has VAC bans on record.').'</b></div></div>';
+    echo $tag;
+    if($dataArray[2][1]!==null){
+        echo '<div class="game"> <span class="most-played">Most Played Game</span> <div> <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/'.$dataArray[2][1]->appid.'/'.$dataArray[2][1]->img_logo_url.'.jpg"> <a href="http://store.steampowered.com/app/'.$dataArray[2][1]->appid.'" target="_blank" class="mosturl"><span class="game-title">'.$dataArray[2][1]->name.'</span></a> <br><span class="game-dev">'.$dataArray[2][1]->appid.'</span><br><span class="game-hours">'.number_format($dataArray[2][1]->playtime_forever / 60, 0, '', '').'</span> <span class="game-label">hours on record</span> </div></div></div><style>.container{background-image:url(https://steamcdn-a.akamaihd.net/steam/apps/'.$dataArray[2][1]->appid.'/page_bg_generated_v6b.jpg);}</style>';
+    }
+    return 1;
+}
+
+$url = array(
+    'ISteamUser/GetPlayerSummaries/v2/?steamids=',
+    'IPlayerService/GetSteamLevel/v1/?steamid=',
+    'IPlayerService/GetOwnedGames/v1/?include_appinfo=1&include_played_free_games=1&steamid=',
+    'ISteamUser/GetPlayerBans/v1/?steamids='
+);
+
+$data = array();
+?>
+
+<div class="wrapper">
+    <div class="s-header">
+    <header>
           <a href=".">
-            <div style="margin-left:20px;">
-              <img src="https://imgur.com/YprLcTh.png" style="margin-right:15px;float:left;">
-              <div style="float:left;display: flex;align-self: center;font-size: 1.25rem;color: #dedddc;">Steam Profiler
+            <div class="logo-container">
+              <img src="https://imgur.com/YprLcTh.png">
+              <div class="logo">Steam Profiler
               </div>
             </div>
           </a>
-          <div style="margin-right:5px;">
+          <div class="menu-container">
             <a href=".">
               <menuitem>Home
-              </menuitem>
+            </menuitem>
             </a>
           <a href="https://github.com/Salies/steam-profiler">
             <menuitem>Source
             </menuitem>
           </a>
-        <a href="https://developer.valvesoftware.com/wiki/Steam_Web_API">
-          <menuitem>Steam API
-          </menuitem>
-        </a>
-      <!--<menuitem>CS:GO Profiler</menuitem>-->
     </div>
     </header>
-  </section>
-<section class="page">
-  <div class="form">
-    Enter a Steam64ID, Vanity ID or Profile URL
-    <form enctype="multipart/form-data" action="" method="post" >
-      <input type="text" name="steamid" class="steamid">
-    </form>
-  </div>
-  <div class="error">
-  </div>
-  <div class="results">
-    <div style="float: left;width: 75%;">
-      <img src="#" class="avatar">
-      <a href="#" class="nickurl" target="_blank">
-        <span class="nick">
-        </span>
-      </a>
-      <br>
-      <br>
-      <img src="#" class="flag" title="">
-      <span class="name">
-      </span>
-      <br>
-      <span class="games_count">
-      </span>
-      <span class="desc"> games owned
-      </span>
-      <br>
-      <span class="hours_count">
-      </span>
-      <span class="desc"> hours on record
-      </span>
-      <br>
-      <span class="years">
-      </span>
-      <span class="desc"> years of service
-      </span>
-      <br>
-      <div class="since">
-      </div>
-      <div style="margin-top: 8px;">
-        <span class="on">
-        </span> - 
-        <span class="last">
-        </span>
-      </div>
-    </div>
-    <div style="float:right;width: 20%;">
-      <div class="level">
-      </div>
-      <div class="ban">
-        <img src="shield.png">
-        <span class="vac">
-          <span style="font-weight:500;">
-          </span>
-          <br>
-        </span>
-      </div>
-    </div>
-    <div class="most">
-      <span class="mp">Most Played Game
-      </span>
-      <br>
-      <div style="margin-top:10px">
-        <img src="#" class="most_header">
-        <a href="#" class="mosturl">
-          <span class="most_name">
-          </span>
-        </a>
-        <br>
-        <span class="most_genre">
-        </span> - 
-        <span class="most_dev">
-        </span>
-        <div class="most_hours">
-          <span class="m_hours">
-          </span> hours on record
+
+    <div class="container">
+        <div class="form-container">
+            Enter a Steam64ID, Vanity ID or Profile URL
+            <form>
+                <input type="text" name="id" class="steamid">
+            </form>
         </div>
-      </div>
+
+        <?php
+        if($input){
+            $id = parseSteamInput($key, $input);
+            
+            if($id!==false){
+                array_push($data, json_decode(file_get_contents('https://api.steampowered.com/'.$url[0].$id.'&key='.$key)));
+                if($data[0]->response->players[0]->communityvisibilitystate!==3){
+                    echo '<div class="error">This profile is either set to "private" or "friends only".</div>';
+                    return 0;
+                }
+
+                for($i=1;$i<sizeof($url);$i++){
+                    array_push($data, json_decode(file_get_contents('https://api.steampowered.com/'.$url[$i].$id.'&key='.$key)));
+                }
+
+                //filtrating info
+                $data[1] = $data[1]->response->player_level;
+                $data[0] = $data[0]->response->players[0];
+                $data[3] = $data[3]->players[0]->NumberOfVACBans;
+                $data[2] = $data[2]->response;
+                if(empty((array)$data[2])){
+                    $data[2] = array();
+                    $data[2][0] = '–';
+                    $data[2][1] = null;
+                    $data[2][2] = '–';
+                }
+                else{
+                    function cmp($a, $b)
+                    {   
+                        if ($a->playtime_forever == $b->playtime_forever) {
+                        return 0;
+                        }
+                        return ($a->playtime_forever > $b->playtime_forever) ? -1 : 1;
+                    }
+                    usort($data[2]->games, "cmp");
+                    $data[2] = array($data[2]->game_count, $data[2]->games[0], number_format(array_sum(array_column($data[2]->games, 'playtime_forever')) / 60, 2, '.', ''));
+                }
+            
+                printProfile($data);
+            }
+            else{
+                echo '<div class="error">This profile does not exist.</div>';
+            }
+        }
+        ?>
     </div>
-  </div>
-</section>
-<footer>
-  <div>Made with 
-    <a style="color: #dedddc;font-weight:bold;text-decoration:none;" href="https://www.youtube.com/watch?v=KF-pdp12lk8" target="_blank">❤
-    </a> by 
-    <a style="color: #dedddc;" href="https://saliesbox.com">Salies</a> using the <a style="color: #dedddc;" href="https://developer.valvesoftware.com/wiki/Steam_Web_API">Steam API</a>.
-</footer>
-  </div>
-  <?php
-$key = "super_cool_key";
-$input = $_POST['steamid'];
-function morte(){
-echo "<script>error();</script>";
-die("morri"); //die function
-}
-function priva(){
-echo "<script>priva();</script>";
-die("morri"); //die function
-}
-if($input==""){
-die(); //if input is blank, die - I'm not using my morte (death in portuguese) function 'cause a blank input happens when the program loads, then, an error message should not be displayed. It's not useful to show an error to the user if the i$
-}
-if(substr($input, 0, 29) === "http://steamcommunity.com/id/"){
-$user = str_replace(array('http://steamcommunity.com/id/','/'), '',$input);
-//echo "<script>console.log('$user')</script>";
-}
-else if(substr($input, 0, 35) === "http://steamcommunity.com/profiles/"){
-$user = str_replace(array('http://steamcommunity.com/profiles/','/'), '',$input);
-//echo "<script>console.log('$user')</script>";
-}
-else{
-$user = $input;
-}
-//true info
-if (is_numeric($user)!==true) {
-$url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=".$key."&vanityurl=".$user;
-$idpage = file_get_contents($url);
-$obj = json_decode($idpage);
-if($obj->response->success!==1){
-morte(); //if vanity input does not have a counterpart, die
-}
-$trueid = $obj->response->steamid;
-}
-else{
-if(strlen($user)<17){
-morte(); //if number input has less than 17 characters, die
-}
-$trueid = $user;
-}
-//urls
-$level_url = "https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=".$key."&steamid=".$trueid;
-$prof_url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=".$key."&steamids=".$trueid;
-$games_url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=".$key."&steamid=".$trueid."&format=json&include_appinfo=1&include_played_free_games=1";
-$bans_url = "https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=".$key."&steamids=".$trueid;
-$level = json_decode(file_get_contents($level_url))->response->player_level;
-if(is_numeric($level)!==true){
-morte();
-}
-$levar = "Level ".$level;
-//profile info - organize
-$prof_path = json_decode(file_get_contents($prof_url))->response->players[0];
-//profile url
-$prof_url = $prof_path->profileurl;
-//name
-$prof_name = $prof_path->personaname;
-if($prof_path->communityvisibilitystate==1){
-priva();
-}
-if(strlen($prof_name)>=22 && ctype_upper($prof_name)===true){
-$prof_name = substr($prof_name, 0, 22);
-}
-else if(strlen($prof_name)>=29 && ctype_upper($prof_name)===false){
-$prof_name = substr($prof_name, 0, 25);
-}
-//real name
-$real_name = $prof_path->realname;
-//image
-$prof_img = $prof_path->avatarfull;
-//country
-$prof_loc = $prof_path->loccountrycode;
-if($prof_loc==""){
-$band = "#";
-$country = "";
-}
-else{
-$band = 'flags/4x3/'.$prof_loc.'.svg';
-$country = Locale::getDisplayRegion("-".$prof_loc, 'en_uns');
-}
-//online?
-$prof_state = $prof_path->personastate;
-$states = [
-"Offline",
-"Online",
-"Busy",
-"Away",
-"Snooze",
-"Looking to trade",
-"Looking to play"
-];
-$on = $states[$prof_state];
-//last time
-$last_time = $prof_path->lastlogoff;
-$last_on = date('F',$last_time).date(' d',$last_time).", ".date('Y',$last_time);
-$last = "Last online on ".$last_on;
-//created account
-$first_time = $prof_path->timecreated;
-$first_on = date('F',$first_time).date(' d',$first_time).", ".date('Y',$first_time);
-$years = date('Y') - date('Y',$first_time);
-//games played
-$games = json_decode(file_get_contents($games_url));
-$games_count = $games->response->game_count;
-//most played game
-$games_min = array_column($games->response->games, 'playtime_forever');
-$max = max($games_min); //finding most played game
-$games_hours = intval($max / 60);
-$total_hours = array_sum($games_min) / 60;
-$games_ar = $games->response->games;
-$j = count($games_ar);
-for($i = 0; $i < $j ; $i++) { //looping to find its id
-$play = $games->response->games[$i];
-if($play->playtime_forever==$max){
-$mostid = $play->appid;
-$most_header = 'https://steamcdn-a.akamaihd.net/steam/apps/'.$mostid.'/capsule_184x69.jpg';
-}
-};
-//most played game info
-$most_url = "http://store.steampowered.com/api/appdetails?appids=".$mostid;
-$most = json_decode(file_get_contents($most_url));
-$most_link = "http://store.steampowered.com/app/".$mostid;
-$most_name = $most->$mostid->data->name;
-$most_author = $most->$mostid->data->developers[0];
-$most_genre = $most->$mostid->data->genres[0]->description;
-$most_background = str_replace("http://cdn.akamai.steamstatic.com","https://steamcdn-a.akamaihd.net",($most->$mostid->data->background));
-//bans
-$bans = json_decode(file_get_contents($bans_url));
-$bans_vac = $bans->players[0]->VACBanned;
-$bans_com = $bans->players[0]->CommunityBanned;
-$bans_eco = $bans->players[0]->EconomyBan;
-$safe = '';
-if($bans_vac=="" && $bans_com=="" && $bans_eco=="none"){
-$safe = 'good';
-}
-else{
-$safe = 'bad';
-}
-echo //fuck arrays - nah, just kidding, it's just that JS arrays are kinda buggy to write in PHP
-"
-<script>
-var nick = '$prof_name',
-real_name = '$real_name', 
-flag = '$band', 
-country = '$country', 
-avatar = '$prof_img', 
-games_count = $games_count, 
-hours = $total_hours, 
-years = $years, 
-since = '$first_on', 
-level = '$levar', 
-online = '$on', 
-last = '$last',
-most_name = '$most_name',
-most_header = '$most_header',
-most_genre = '$most_genre',
-most_dev = '$most_author',
-most_url = '$most_link',
-most_hours = '$games_hours',
-player_url = '$prof_url',
-most_back = '$most_background',
-ban = '$safe';
-</script>
-";
-?>
-  <script>
-    var operators =
-        [
-          {
-            class:".nick", type:"text", var:nick}
-          ,
-          {
-            class:".name", type:"text", var:real_name}
-          ,
-          {
-            class:".flag", type:"img", var:flag.toLowerCase()}
-          ,
-          {
-            class:".avatar", type:"img", var:avatar}
-          ,
-          {
-            class:".games_count", type:"text", var:games_count}
-          ,
-          {
-            class:".hours_count", type:"text", var:hours.toFixed(2)}
-          ,
-          {
-            class:".years", type:"text", var:years}
-          ,
-          {
-            class:".since", type:"text", var:"(Member since " + since + ")"}
-          ,
-          {
-            class:".level", type:"text", var:level}
-          ,
-          {
-            class:".on", type:"text", var:online}
-          ,
-          {
-            class:".last", type:"text", var:last}
-          ,
-          {
-            class:".most_name", type:"text", var:most_name}
-          ,
-          {
-            class:".most_header", type:"img", var:most_header}
-          ,
-          {
-            class:".most_genre", type:"text", var:most_genre}
-          ,
-          {
-            class:".most_dev", type:"text", var:most_dev}
-          ,
-          {
-            class:".m_hours", type:"text", var:most_hours}
-          ,
-          {
-            class:".nickurl", type:"link", var:player_url}
-          ,
-          {
-            class:".mosturl", type:"link", var:most_url}
-        ];
-    for (i = 0; i < operators.length; i++) {
-      if(operators[i].type=="text"){
-        document.querySelector(operators[i].class).innerHTML = operators[i].var;
-      }
-      else if(operators[i].type=="img"){
-        document.querySelector(operators[i].class).src = operators[i].var;
-      }
-      else if(operators[i].type=="link"){
-        document.querySelector(operators[i].class).href = operators[i].var;
-      }
-    }
-    //extra little things that aren't worth an array
-    document.querySelector(".flag").title = country;
-    document.querySelector(".page").style.backgroundImage = "url("+ most_back +")";
-    //ban stuff
-    banid = document.querySelector(".vac");
-    bancont = document.querySelector(".ban");
-    if(ban=="good"){
-      bancont.style.background = "#1E6D1E";
-      banid.innerHTML = '<span style="font-weight:500;">Safe Player</span><br>No bans on record';
-    }
-    else{
-      bancont.style.background = "#6d1e1e";
-      banid.innerHTML = '<span style="font-weight:500;">Unsafe Player</span><br>Bans on record';
-    }
-    display();
-  </script>
-  </body>
+
+    <footer>
+        Made with ❤ by Salies using the Steam API.
+    </footer>
+</div>
+</body>
 </html>

@@ -1,0 +1,271 @@
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+body{
+color:#fff;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.wrapper {
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(https://store.steampowered.com/public/images/v6/colored_body_top2.png?v=2) center top no-repeat #1b2838;
+}
+
+.s-header{
+    width: 100%;
+    height: 100px;
+    background: #171a21;
+}
+
+header, footer{
+    width:100%;
+}
+
+header {
+    max-width: 1000px;
+    height: 100px;
+    align-items: center;
+    text-transform: uppercase;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+header, header div, header div menuitem {
+    display: flex;
+}
+
+header div menuitem {
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 100px;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    transition: .35s;
+    cursor: pointer;
+    color: #b8b6b4;
+}
+
+header div menuitem:hover {
+    background: #262633;
+    color:#fff;
+}
+
+header img{
+    margin-right:15px;float:left;
+}
+
+.logo-container{
+    margin-left:20px;
+}
+
+.menu-container{
+    margin-right:5px;
+}
+
+.container {
+    width:1000px;
+    height:calc(100vh - 160px);
+    margin:0 auto;
+    background:rgba(0,0,0,0.75);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.form-container{
+    padding-top: 35px;
+    font-size: 28px;
+    color: #66C0F4;
+    text-align: center;
+}
+
+.steamid {
+    text-align: left;
+    height: 33px;
+    margin-top: 5px;
+    top: 15px;
+    bottom: 15px;
+    font-size: 17px;
+    width: 50%;
+    outline: none;
+    font-style: italic;
+    background-color: #1b2838;
+    background: -webkit-linear-gradient( top, #1b2838 5%, #203342 95%);
+    background: linear-gradient( to bottom, #1b2838 5%, #203342 95%);
+    border: 1px solid #56707f;
+    border-radius: 3px;
+    box-shadow: 0 0 50px rgba(103,193,245,0.3);
+    color: #abdaf4;
+    padding: 5px 5px 5px 10px;
+    text-indent: 3px;
+}
+
+form{
+    margin-top: 15px;
+}
+
+footer{
+    position:absolute;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    max-width:980px;
+    color: #dedddc;
+    height:60px;
+    background: #171a21;
+    line-height:60px;
+    font-size: 12px;
+    padding-left: 20px;
+}
+
+.logo{
+    float:left;display: flex;align-self: center;font-size: 1.25rem;color: #dedddc;
+}
+
+.results{
+  position:relative;
+  width: 750px;
+  height: 315px;
+  background: rgba(0,0,0,0.75);
+  margin: 50px auto 0 auto;
+  padding: 25px;
+}
+
+.player{
+width:75%;
+}
+
+.level-ban{
+float:right;
+width:20%;
+}
+
+.avatar{
+width:184px;
+height:184px;
+float:left;
+margin-right:15px;
+background-position:0 center;
+background-repeat:no-repeat;
+background-size: 184px auto;
+}
+
+.personaname, .stats{
+ font-size: 25px;
+}
+
+.game-dev, .country, .game-label{
+font-size: 14px;
+}
+
+.country{
+height:18px;
+line-height:18px;
+margin-bottom:8px;
+}
+
+.country span{
+display: inline-block;
+vertical-align: middle;
+line-height: normal;
+margin-top: -2.5px;
+}
+
+.country img{
+height:15px;
+position: relative;
+top: 50%;
+transform: translateY(-50%);
+margin-right: 1px;
+}
+
+.country, .number, .label, .since, .most-played, .game, header div menuitem, footer{
+font-weight: 300;
+}
+
+.number, .most-played, .game-hours{
+color: #66C0F4;
+}
+
+.number{
+font-size: 25px;
+}
+
+.label, .since, .game-dev, .game-label{
+color: #dedddc;
+}
+
+.label{
+font-size: 13px;
+}
+
+.since {
+  font-size: 11px;
+  margin-top: -2.5px;
+  margin-bottom:8px;
+}
+
+.game{
+width:100%;
+clear: both;
+margin-top: 25px;
+}
+
+.game div{
+margin-top:10px;
+}
+
+.game div img{
+float: left;
+margin-right: 10px;
+}
+
+.most-played, .game-title, .game-hours{
+font-size: 20px;
+}
+
+.level-ban{
+position:absolute;
+right:25px;
+top:25px; 
+}
+
+.level{
+display: flex;
+align-items: center;
+justify-content: center;
+height: 60px;
+background-color: #1c1c1c;
+font-size: 25px;
+}
+
+.ban{
+margin-top: 15px;
+background-color: #5cb85c;
+font-size:12px;
+padding:10px;
+}
+
+.true{
+background-color: #d9534f;
+}
+
+.error {
+    margin: 0 auto;
+    margin-top: 25px;
+    color: #ff3e36;
+    text-align: center;
+    font-size: 22px;
+}
