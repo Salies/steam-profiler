@@ -3,6 +3,7 @@
     "description": "A lightweight profiler made with the Steam API.",
     "type": "project",
     "require": {
+        "php": "^7.1",
         "ext-intl": "^1.1"
     },
     "license": "GPL-3.0",
@@ -12,7 +13,9 @@
             "email": "serezane@protonmail.com"
         }
     ],
-    "post-install-cmd": [
-        "npm install flag-icon-css"
-    ]
+    "scripts": {
+        "post-install-cmd": [
+            "mkdir assets && cd assets && git clone https://github.com/lipis/flag-icon-css"
+        ]
+    }
 }
